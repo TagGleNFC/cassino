@@ -1,57 +1,85 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-
+    // 1. SELECIONAR OS ELEMENTOS DO HTML
     const reels = document.querySelectorAll('.reel');
     const spinButton = document.getElementById('spinButton');
     const resultDiv = document.getElementById('result');
     const balanceAmountSpan = document.getElementById('balanceAmount');
     const depositButton = document.getElementById('depositButton');
-    const increaseBetBtn = document.getElementById('increaseBet'); 
-    const decreaseBetBtn = document.getElementById('decreaseBet'); 
-    const betAmountSpan = document.getElementById('betAmount');   
+    const increaseBetBtn = document.getElementById('increaseBet');
+    const decreaseBetBtn = document.getElementById('decreaseBet');
+    const betAmountSpan = document.getElementById('betAmount');
 
-
-    const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '🔔'];
+    // 2. CONFIGURAÇÕES DO JOGO
+    const SYMBOLS = [
+        { symbol: '🍒', multiplier: 2, weight: 10 },
+        { symbol: '🍋', multiplier: 5, weight: 8 },
+        { symbol: '🍊', multiplier: 10, weight: 6 },
+        { symbol: '🍉', multiplier: 15, weight: 4 },
+        { symbol: '🔔', multiplier: 25, weight: 2 },
+        { symbol: '⭐', multiplier: 50, weight: 1 }
+    ];
+    
     const SPIN_DURATION = 2000;
     
-
+    // CONFIGURAÇÕES DA BANCA E APOSTA
     const INITIAL_BALANCE = 0;
-    const BET_INCREMENT = 5;      
-    const WIN_MULTIPLIER = 10;    
-
+    const MINIMUM_BET = 5; // Aposta mínima
     let currentBalance = INITIAL_BALANCE;
-    let currentBet = 5;    
-    let spinCount = 0;
+    let currentBet = MINIMUM_BET;
 
+    // --- NOVAS FUNÇÕES DE LÓGICA ---
+
+    function getWeightedRandomSymbol() {
+        const totalWeight = SYMBOLS.reduce((sum, symbol) => sum + symbol.weight, 0);
+        let random = Math.random() * totalWeight;
+
+        for (const symbolData of SYMBOLS) {
+            random -= symbolData.weight;
+            if (random < 0) {
+                return symbolData;
+            }
+        }
+    }
+
+    function getBetIncrement(bet) {
+        if (bet >= 150) {
+            return 50;
+        } else if (bet >= 50) {
+            return 10;
+        } else {
+            return 5;
+        }
+    }
+
+    // --- FUNÇÕES ATUALIZADAS ---
 
     function updateBalanceDisplay() {
         balanceAmountSpan.textContent = currentBalance;
     }
     
- 
     function updateBetDisplay() {
         betAmountSpan.textContent = currentBet;
-
         spinButton.disabled = currentBet > currentBalance;
     }
 
-
     function increaseBet() {
-
-        if (currentBet + BET_INCREMENT <= currentBalance) {
-            currentBet += BET_INCREMENT;
+        const increment = getBetIncrement(currentBet);
+        if (currentBet + increment <= currentBalance) {
+            currentBet += increment;
             updateBetDisplay();
         }
     }
 
     function decreaseBet() {
+        const effectiveBetForDecrement = currentBet - 1;
+        const decrement = getBetIncrement(effectiveBetForDecrement);
 
-        if (currentBet - BET_INCREMENT >= BET_INCREMENT) {
-            currentBet -= BET_INCREMENT;
+        if (currentBet - decrement >= MINIMUM_BET) {
+            currentBet -= decrement;
             updateBetDisplay();
         }
     }
-
 
     function handleDeposit() {
         const depositValueString = prompt("Digite o valor que deseja depositar:", "100");
@@ -65,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentBalance += depositAmount;
         updateBalanceDisplay();
-        updateBetDisplay(); 
+        updateBetDisplay();
         resultDiv.textContent = `Depósito de R$ ${depositAmount} realizado com sucesso!`;
     }
 
@@ -78,55 +106,72 @@ document.addEventListener('DOMContentLoaded', () => {
         currentBalance -= currentBet;
         updateBalanceDisplay();
 
-        spinCount++;
         resultDiv.textContent = '';
         spinButton.disabled = true;
-        increaseBetBtn.disabled = true; 
+        increaseBetBtn.disabled = true;
         decreaseBetBtn.disabled = true;
 
+        const finalResults = [getWeightedRandomSymbol(), getWeightedRandomSymbol(), getWeightedRandomSymbol()];
 
-        const isForcedWin = spinCount % 5 === 0;
-        let winSymbol = null;
-        if (isForcedWin) {
-            winSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-        }
         reels.forEach((reel, index) => {
             reel.classList.add('spinning');
-            const interval = setInterval(() => { reel.textContent = symbols[Math.floor(Math.random() * symbols.length)]; }, 100);
+            const interval = setInterval(() => { 
+                reel.textContent = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)].symbol;
+            }, 100);
+            
             setTimeout(() => {
                 clearInterval(interval);
                 reel.classList.remove('spinning');
-                if (isForcedWin) { reel.textContent = winSymbol; }
-                else { reel.textContent = symbols[Math.floor(Math.random() * symbols.length)]; }
-                if (index === reels.length - 1) { determineResult(); }
+                reel.textContent = finalResults[index].symbol;
+
+                if (index === reels.length - 1) {
+                    determineResult(finalResults);
+                }
             }, SPIN_DURATION + (index * 500));
         });
     }
     
+    function determineResult(finalResults) {
+        const firstSymbol = finalResults[0].symbol;
+        const allSame = finalResults.every(result => result.symbol === firstSymbol);
 
-    function determineResult() {
-        const finalResults = Array.from(reels).map(reel => reel.textContent);
-
-        if (finalResults[0] === finalResults[1] && finalResults[1] === finalResults[2]) {
-            const prize = currentBet * WIN_MULTIPLIER;
+        if (allSame) {
+            const winningSymbolData = SYMBOLS.find(s => s.symbol === firstSymbol);
+            const prize = currentBet * winningSymbolData.multiplier;
             currentBalance += prize;
             updateBalanceDisplay();
 
-            const message = (spinCount % 5 === 0) ? '🎉 Vitória da Sorte! 🎉' : '🎉 Você Ganhou! 🎉';
-            resultDiv.textContent = `${message} (+R$ ${prize})`;
+            resultDiv.textContent = `🎉 Você Ganhou! 🎉 (+R$ ${prize})`;
         } else {
-            resultDiv.textContent = 'Tente novamente!';
+            resultDiv.textContent = 'Manda mais dinheiro pra conta do pai!';
         }
 
         updateBetDisplay();
         increaseBetBtn.disabled = false;
         decreaseBetBtn.disabled = false;
 
-        if (currentBalance < BET_INCREMENT) {
-             resultDiv.textContent += " Fim de Jogo! Faça um depósito para continuar.";
+        if (currentBalance < MINIMUM_BET) {
+             resultDiv.textContent += " Ja era, irmão! Fiquei rico na suas custas.";
         }
     }
 
+    function populatePrizeTable() {
+        const prizeTableContent = document.querySelector('.prize-table-content');
+        prizeTableContent.innerHTML = prizeTableContent.querySelector('h3').outerHTML;
+        const sortedSymbols = [...SYMBOLS].sort((a, b) => b.multiplier - a.multiplier);
+
+        sortedSymbols.forEach(symbolData => {
+            const row = document.createElement('div');
+            row.classList.add('prize-row');
+            row.innerHTML = `
+                <span class="prize-symbol">${symbolData.symbol.repeat(3)}</span>
+                <span class="prize-multiplier">${symbolData.multiplier}x</span>
+            `;
+            prizeTableContent.appendChild(row);
+        });
+    }
+
+    // INICIALIZAÇÃO DO JOGO
     updateBalanceDisplay();
     updateBetDisplay();
     spinButton.addEventListener('click', spin);
@@ -138,4 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
         spinButton.disabled = true;
         resultDiv.textContent = "Bem-vindo! Faça um depósito para começar.";
     }
+
+    populatePrizeTable();
 });
