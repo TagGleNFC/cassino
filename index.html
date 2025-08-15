@@ -3,15 +3,20 @@
 <head>
     </title>
     <link rel="stylesheet" href="style.css">
-</head>
+    </head>
 <body>
-
     <div class="slot-machine">
         <h1>Caça-Níquel</h1>
 
         <div class="balance">
             <span>Saldo: R$ </span>
-            <span id="balanceAmount">100</span>
+            <span id="balanceAmount">0</span>
+        </div>
+
+        <div class="bet-controls">
+            <button id="decreaseBet" class="bet-btn">-</button>
+            <span class="bet-text">Aposta: R$ <span id="betAmount">5</span></span>
+            <button id="increaseBet" class="bet-btn">+</button>
         </div>
 
         <div class="reels">
@@ -19,7 +24,12 @@
             <div class="reel">?</div>
             <div class="reel">?</div>
         </div>
-        <button id="spinButton">Girar (Custo: R$ 5)</button> <p id="result"></p>
+
+        <div class="controls">
+            <button id="spinButton">Girar</button> <button id="depositButton">Depositar</button>
+        </div>
+        
+        <p id="result"></p>
     </div>
 
     <script src="script.js"></script>

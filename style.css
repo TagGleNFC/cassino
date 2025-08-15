@@ -1,4 +1,4 @@
-/* Estilos gerais para a página */
+/* ---- ESTILOS GERAIS ---- */
 body {
     font-family: Arial, sans-serif;
     display: flex;
@@ -9,7 +9,7 @@ body {
     margin: 0;
 }
 
-/* Contêiner principal da máquina */
+/* ---- CONTÊINER PRINCIPAL DA MÁQUINA ---- */
 .slot-machine {
     background-color: #ffffff;
     border: 5px solid #333;
@@ -17,59 +17,16 @@ body {
     padding: 20px 30px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     text-align: center;
+    width: 90%;
+    max-width: 500px; /* Garante que não fique muito largo em telas grandes */
 }
 
 h1 {
     color: #c0392b;
+    margin-top: 0;
 }
 
-/* Área que contém os rolos */
-.reels {
-    display: flex;
-    justify-content: center;
-    gap: 20px; /* Espaço entre os rolos */
-    margin: 20px 0;
-}
-
-/* Estilo de cada rolo individual */
-.reel {
-    width: 100px;
-    height: 100px;
-    border: 3px solid #ddd;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3.5rem; /* Tamanho grande para o emoji/símbolo */
-    background-color: #fafafa;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilo do botão de girar */
-#spinButton {
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #fff;
-    background-color: #27ae60; /* Verde */
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#spinButton:hover {
-    background-color: #2ecc71; /* Verde mais claro */
-}
-
-/* Estilo da área de resultado */
-#result {
-    margin-top: 20px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    min-height: 30px; /* Garante que o layout não "pule" */
-    color: #3498db;
-}
+/* ---- DISPLAY DE SALDO (BANCA) ---- */
 .balance {
     background-color: #2c3e50;
     color: #ecf0f1;
@@ -83,4 +40,121 @@ h1 {
 
 #balanceAmount {
     color: #f1c40f; /* Cor de ouro para o valor */
+}
+
+/* ---- CONTROLES DE APOSTA (+/-) ---- */
+.bet-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.bet-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+#betAmount {
+    color: #c0392b; /* Vermelho para destacar a aposta */
+}
+
+.bet-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 50%; /* Deixa os botões redondos */
+    border: 2px solid #7f8c8d;
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bet-btn:hover {
+    background-color: #bdc3c7;
+    border-color: #2c3e50;
+}
+
+/* ---- ROLOS (REELS) E ANIMAÇÃO ---- */
+.reels {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.reel {
+    width: 100px;
+    height: 100px;
+    border: 3px solid #ddd;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3.5rem;
+    background-color: #fafafa;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Impede que a animação "vaze" */
+}
+
+.reel.spinning {
+  animation: reel-spin 0.3s linear infinite;
+  filter: blur(2px); /* Efeito de borrão para simular velocidade */
+}
+
+@keyframes reel-spin {
+  0% { transform: translateY(-5px); }
+  50% { transform: translateY(5px); }
+  100% { transform: translateY(-5px); }
+}
+
+/* ---- BOTÕES DE AÇÃO (GIRAR, DEPOSITAR) ---- */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.controls button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#spinButton {
+    background-color: #27ae60; /* Verde */
+}
+#spinButton:hover {
+    background-color: #2ecc71;
+}
+
+#depositButton {
+    background-color: #3498db; /* Azul */
+}
+#depositButton:hover {
+    background-color: #5dade2;
+}
+
+/* ---- ESTADO DESABILITADO (PARA TODOS OS BOTÕES) ---- */
+button:disabled {
+    background-color: #95a5a6 !important; /* !important para sobrescrever outros estilos */
+    cursor: not-allowed;
+}
+
+/* ---- ÁREA DE RESULTADO ---- */
+#result {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    min-height: 30px; /* Garante que o layout não "pule" */
+    color: #3498db;
 }
