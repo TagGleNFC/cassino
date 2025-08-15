@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const increaseBetBtn = document.getElementById('increaseBet');
     const decreaseBetBtn = document.getElementById('decreaseBet');
     const betAmountSpan = document.getElementById('betAmount');
+    // NOVO: Seleciona os elementos da tabela de prêmios
+    const prizeTableToggle = document.querySelector('.prize-table-toggle');
+    const prizeTableContent = document.querySelector('.prize-table-content');
 
     // 2. CONFIGURAÇÕES DO JOGO
     const SYMBOLS = [
@@ -24,11 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // CONFIGURAÇÕES DA BANCA E APOSTA
     const INITIAL_BALANCE = 0;
-    const MINIMUM_BET = 5; // Aposta mínima
+    const MINIMUM_BET = 5;
     let currentBalance = INITIAL_BALANCE;
     let currentBet = MINIMUM_BET;
 
-    // --- NOVAS FUNÇÕES DE LÓGICA ---
+    // --- FUNÇÕES DE LÓGICA ---
 
     function getWeightedRandomSymbol() {
         const totalWeight = SYMBOLS.reduce((sum, symbol) => sum + symbol.weight, 0);
@@ -52,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- FUNÇÕES ATUALIZADAS ---
+    // --- FUNÇÕES DE INTERFACE ---
 
     function updateBalanceDisplay() {
         balanceAmountSpan.textContent = currentBalance;
@@ -171,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // INICIALIZAÇÃO DO JOGO
+    // INICIALIZAÇÃO E EVENT LISTENERS
     updateBalanceDisplay();
     updateBetDisplay();
     spinButton.addEventListener('click', spin);
@@ -179,6 +182,11 @@ document.addEventListener('DOMContentLoaded', () => {
     increaseBetBtn.addEventListener('click', increaseBet);
     decreaseBetBtn.addEventListener('click', decreaseBet);
     
+    // NOVO: Adiciona o evento de clique para mostrar/esconder a tabela de prêmios
+    prizeTableToggle.addEventListener('click', () => {
+        prizeTableContent.classList.toggle('visible');
+    });
+
     if(currentBalance < currentBet) {
         spinButton.disabled = true;
         resultDiv.textContent = "Bem-vindo! Faça um depósito para começar.";

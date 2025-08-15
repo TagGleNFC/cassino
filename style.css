@@ -1,4 +1,8 @@
 /* ---- ESTILOS GERAIS ---- */
+* {
+    box-sizing: border-box; /* Garante que padding e borda não aumentem o tamanho dos elementos */
+}
+
 body {
     font-family: Arial, sans-serif;
     display: flex;
@@ -7,19 +11,29 @@ body {
     min-height: 100vh;
     background-color: #f0f0f0;
     margin: 0;
-    padding: 15px 0; /* Adiciona um respiro em telas pequenas */
+    padding: 15px; /* Adiciona um respiro nas laterais da tela */
 }
 
-/* ---- CONTÊINER PRINCIPAL DA MÁQUINA ---- */
+/* ---- CONTÊINER PRINCIPAL DO JOGO ---- */
+.game-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* ---- MÁQUINA CAÇA-NÍQUEL ---- */
 .slot-machine {
     background-color: #ffffff;
     border: 5px solid #333;
     border-radius: 15px;
-    padding: 20px 30px;
+    padding: 20px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     text-align: center;
-    width: 90%;
-    max-width: 500px; /* Garante que não fique muito largo em telas grandes */
+    width: 100%;
+    max-width: 500px;
 }
 
 h1 {
@@ -40,7 +54,7 @@ h1 {
 }
 
 #balanceAmount {
-    color: #f1c40f; /* Cor de ouro para o valor */
+    color: #f1c40f;
 }
 
 /* ---- CONTROLES DE APOSTA (+/-) ---- */
@@ -56,23 +70,25 @@ h1 {
     font-size: 1.2rem;
     font-weight: bold;
     color: #333;
+    white-space: nowrap; /* Impede que o texto quebre em telas pequenas */
 }
 
 #betAmount {
-    color: #c0392b; /* Vermelho para destacar a aposta */
+    color: #c0392b;
 }
 
 .bet-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 1.5rem;
+    width: 45px; /* Aumentado para toque */
+    height: 45px; /* Aumentado para toque */
+    font-size: 1.8rem;
     font-weight: bold;
-    border-radius: 50%; /* Deixa os botões redondos */
+    border-radius: 50%;
     border: 2px solid #7f8c8d;
     background-color: #ecf0f1;
     color: #2c3e50;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0; /* Impede que os botões encolham */
 }
 
 .bet-btn:hover {
@@ -84,26 +100,43 @@ h1 {
 .reels {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 10px; /* Espaço reduzido para caber melhor */
 }
 
 .reel {
-    width: 100px;
-    height: 100px;
+    width: 28%; /* Usa porcentagem para ser fluido */
+    padding-bottom: 28%; /* Truque para manter o rolo quadrado (aspect-ratio) */
+    height: 0;
+    position: relative;
     border: 3px solid #ddd;
     border-radius: 10px;
+    background-color: #fafafa;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.reel-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3.5rem;
-    background-color: #fafafa;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden; /* Impede que a animação "vaze" */
+    font-size: 12vw; /* Fonte se ajusta à largura da tela */
 }
 
-.reel.spinning {
+@media (min-width: 400px) {
+    .reel-content {
+        font-size: 3.5rem; /* Trava a fonte em um tamanho máximo em telas maiores */
+    }
+}
+
+
+.reel.spinning .reel-content {
   animation: reel-spin 0.3s linear infinite;
-  filter: blur(2px); /* Efeito de borrão para simular velocidade */
+  filter: blur(2px);
 }
 
 @keyframes reel-spin {
@@ -121,8 +154,8 @@ h1 {
 }
 
 .controls button {
-    padding: 15px 30px;
-    font-size: 1.2rem;
+    padding: 15px 25px; /* Padding ajustado */
+    font-size: 1.1rem;
     font-weight: bold;
     color: #fff;
     border: none;
@@ -132,14 +165,14 @@ h1 {
 }
 
 #spinButton {
-    background-color: #27ae60; /* Verde */
+    background-color: #27ae60;
 }
 #spinButton:hover {
     background-color: #2ecc71;
 }
 
 #depositButton {
-    background-color: #3498db; /* Azul */
+    background-color: #3498db;
 }
 #depositButton:hover {
     background-color: #5dade2;
@@ -147,42 +180,36 @@ h1 {
 
 /* ---- ESTADO DESABILITADO (PARA TODOS OS BOTÕES) ---- */
 button:disabled {
-    background-color: #95a5a6 !important; /* !important para sobrescrever outros estilos */
+    background-color: #95a5a6 !important;
     cursor: not-allowed;
 }
 
 /* ---- ÁREA DE RESULTADO ---- */
 #result {
     margin-top: 20px;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
-    min-height: 30px; /* Garante que o layout não "pule" */
+    min-height: 30px;
     color: #3498db;
 }
 
-/* ---- Estilos para o Jogo e a Tabela de Prêmios ---- */
-.game-container {
-    display: flex;
-    align-items: center;
-    gap: 20px; /* Espaço entre a máquina e a tabela */
-}
-
+/* ---- TABELA DE PRÊMIOS ---- */
 .prize-table-container {
-    position: relative; /* Essencial para o posicionamento da tabela */
-    align-self: flex-start; /* Alinha o botão no topo */
+    position: relative;
+    align-self: flex-start;
     margin-top: 20px;
 }
 
 .prize-table-toggle {
-    width: 40px;
-    height: 40px;
+    width: 45px; /* Aumentado para toque */
+    height: 45px; /* Aumentado para toque */
     background-color: #34495e;
     color: white;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: bold;
     cursor: pointer;
     border: 2px solid #2c3e50;
@@ -191,7 +218,7 @@ button:disabled {
 .prize-table-content {
     position: absolute;
     top: 0;
-    left: 120%; /* Posiciona a tabela à direita do botão '?' */
+    left: calc(100% + 10px); /* Posiciona à direita com um espaço */
     background-color: white;
     border: 2px solid #333;
     border-radius: 10px;
@@ -200,12 +227,13 @@ button:disabled {
     width: 220px;
     opacity: 0;
     visibility: hidden;
-    transform: translateX(-10px); /* Efeito de surgir da esquerda */
+    transform: translateX(-10px);
     transition: all 0.3s ease-in-out;
-    z-index: 10; /* Garante que a tabela fique sobre outros elementos */
+    z-index: 10;
 }
 
-.prize-table-container:hover .prize-table-content {
+/* NOVO: Classe 'visible' controlada pelo JS para mostrar a tabela */
+.prize-table-content.visible {
     opacity: 1;
     visibility: visible;
     transform: translateX(0);
@@ -235,60 +263,26 @@ button:disabled {
     color: #27ae60;
 }
 
-/* ---- NOVO: ESTILOS RESPONSIVOS PARA MOBILE ---- */
+/* ---- ESTILOS RESPONSIVOS PARA MOBILE ---- */
 @media (max-width: 768px) {
-
-    /* Empilha o jogo e a tabela de prêmios verticalmente */
     .game-container {
         flex-direction: column;
-        gap: 30px; /* Aumenta o espaço vertical */
     }
 
-    /* Ajusta o padding da máquina para telas menores */
-    .slot-machine {
-        padding: 15px;
-        width: 100%; /* Ocupa a largura total disponível */
-    }
-
-    /* Torna os rolos fluidos para caber em qualquer tela */
-    .reel {
-        width: 25vw;  /* vw = % da largura da tela */
-        height: 25vw; /* Mantém o rolo quadrado */
-        max-width: 90px;  /* Limite para não ficar muito grande */
-        max-height: 90px;
-        font-size: 2.8rem; /* Diminui um pouco a fonte do emoji */
-    }
-
-    .reels {
-        gap: 15px; /* Diminui o espaço entre os rolos */
-    }
-
-    /* Ajusta a posição da tabela de prêmios para aparecer abaixo do '?' */
     .prize-table-container {
         align-self: center; /* Centraliza o container do '?' */
+        width: 100%;
+        display: flex;
+        justify-content: center;
     }
 
     .prize-table-content {
-        left: 50%; /* Centraliza a tabela horizontalmente */
-        top: 120%; /* Posiciona a tabela abaixo do '?' */
-        transform: translateX(-50%) translateY(-10px); /* Ajusta a posição central e o efeito */
+        left: 50%;
+        top: calc(100% + 10px); /* Posiciona abaixo com um espaço */
+        transform: translateX(-50%) translateY(-10px);
     }
-
-    .prize-table-container:hover .prize-table-content {
-        transform: translateX(-50%) translateY(0); /* Animação de surgir para baixo */
-    }
-
-    /* Ajusta o tamanho das fontes e botões */
-    h1 {
-        font-size: 1.8rem;
-    }
-
-    .controls button {
-        padding: 12px 20px;
-        font-size: 1rem;
-    }
-
-    #result {
-        font-size: 1.2rem;
+    
+    .prize-table-content.visible {
+        transform: translateX(-50%) translateY(0);
     }
 }
